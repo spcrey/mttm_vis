@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mttm_vis/param.dart';
 import 'package:mttm_vis/slidebar.dart';
 import 'package:mttm_vis/training_task.dart';
+import 'package:mttm_vis/visualization.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -36,9 +37,7 @@ class _HomeState extends State<Home> {
           Expanded(
             child: switch(_selecedItem) {
               SlidebarSelectableItem.trainingTask => const TrainingTask(),
-              SlidebarSelectableItem.visualization => Container(
-                color: ThemeColors.blue
-              ),
+              SlidebarSelectableItem.visualization => Visualization(),
             },
           ),
         ],

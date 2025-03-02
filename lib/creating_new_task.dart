@@ -1,34 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mttm_vis/param.dart';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:mttm_vis/param.dart';
 
 class CreatingNewTask extends StatefulWidget {
   const CreatingNewTask({
     super.key,
   });
 
-
   @override
   State<CreatingNewTask> createState() => _CreatingNewTaskState();
-}
-
-String getFileNameWithoutExtension(String fileName) {
-  if (fileName.contains('.')) {
-    return fileName.split('.').sublist(0, fileName.split('.').length - 1).join('.');
-  } else {
-    return fileName;
-  }
-}
-
-Future<void> pickFile(Function(String) setFileFun) async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
-  if (result != null) {
-    PlatformFile file = result.files.first;
-    String fileName = getFileNameWithoutExtension(file.name);
-    setFileFun(fileName);
-  } 
 }
 
 class _CreatingNewTaskState extends State<CreatingNewTask> {
@@ -56,7 +37,7 @@ class _CreatingNewTaskState extends State<CreatingNewTask> {
     });
   }
 
-  void _setPointdModelFun(String fileName) {
+  void _setPointModelFun(String fileName) {
     setState(() {
       _pointModelName = fileName;
     });
@@ -65,6 +46,42 @@ class _CreatingNewTaskState extends State<CreatingNewTask> {
   void _setEageSampleStatusFun(bool isUse) {
     setState(() {
       _useEageSample = isUse;
+    });
+  }
+
+  void _setEagePointWeightFun(double value) {
+    setState(() {
+      _eagePointWeight = value;
+    });
+  }
+
+  void _setAdaptiveWeightFun(double value) {
+    setState(() {
+      _adaptiveWeight = value;
+    });
+  }
+
+  void _setTopographyPreProgressFun(bool isUse) {
+    setState(() {
+      _useTopographyPreProgress = isUse;
+    });
+  }
+
+  void _setPdeConstrainstStatusFun(bool isUse) {
+    setState(() {
+      _usePdeConstrainst = isUse;
+    });
+  }
+
+  void _setEquationFun(String fileName) {
+    setState(() {
+      _equationName = fileName;
+    });
+  }
+
+  void _setPdeWeightFun(double value) {
+    setState(() {
+      _pdeWeight = value;
     });
   }
 
@@ -84,7 +101,7 @@ class _CreatingNewTaskState extends State<CreatingNewTask> {
           gridModelName: _gridModelName,
           pointModelName: _pointModelName,
           setGridModelFun: _setGridModelFun,
-          setPointdModelFun: _setPointdModelFun,
+          setPointModelFun: _setPointModelFun,
         ),
         const SizedBox(
           height: 12 * scaleFactor,
@@ -94,8 +111,420 @@ class _CreatingNewTaskState extends State<CreatingNewTask> {
           eagePointWeight: _eagePointWeight,
           adaptiveWeight: _adaptiveWeight,
           setEageSampleStatusFun: _setEageSampleStatusFun,
+          setEagePointWeightFun: _setEagePointWeightFun,
+          setAdaptiveWeightFun: _setAdaptiveWeightFun,
         ),
+        const SizedBox(
+          height: 12 * scaleFactor,
+        ),
+        TopographyPreProgressSetting(
+          useTopographyPreProgress: _useTopographyPreProgress,
+          setTopographyPreProgressFun: _setTopographyPreProgressFun,
+        ),
+        const SizedBox(
+          height: 12 * scaleFactor,
+        ),
+        PdeConstraintSetting(
+          usePdeConstrainst: _usePdeConstrainst,
+          equationName: _equationName,
+          pdeWeight: _pdeWeight,
+          setPdeConstrainstStatusFun: _setPdeConstrainstStatusFun,
+          setEquationFun: _setEquationFun,
+          setPdeWeightFun: _setPdeWeightFun,
+        ),
+        const SizedBox(
+          height: 12 * scaleFactor,
+        ),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                logger.d('创建任务');
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ThemeColors.green,
+                    borderRadius: BorderRadius.circular(2 * scaleFactor),
+                  ),
+                  padding: const EdgeInsets.all(6 * scaleFactor),
+                  child: const SizedBox(
+                    height: 8 * scaleFactor,
+                    child: Text(
+                      '创建任务',
+                      style: TextStyle(
+                        fontSize: 8 * scaleFactor,
+                        color: ThemeColors.white,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 12 * scaleFactor,
+            ),
+            GestureDetector(
+              onTap: () {
+                logger.d('取消');
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ThemeColors.red,
+                    borderRadius: BorderRadius.circular(2 * scaleFactor),
+                  ),
+                  padding: const EdgeInsets.all(6 * scaleFactor),
+                  child: const SizedBox(
+                    height: 8 * scaleFactor,
+                    child: Text(
+                      '取消',
+                      style: TextStyle(
+                        fontSize: 8 * scaleFactor,
+                        color: ThemeColors.white,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ]
+        )
       ],
+    );
+  }
+}
+
+class PdeConstraintSetting extends StatefulWidget {
+  final bool usePdeConstrainst;
+  final String equationName;
+  final double pdeWeight;
+  final Function(bool) setPdeConstrainstStatusFun; 
+  final Function(String) setEquationFun;
+  final Function(double) setPdeWeightFun;
+
+  const PdeConstraintSetting({
+    super.key, 
+    required this.usePdeConstrainst, 
+    required this.equationName, 
+    required this.pdeWeight, 
+    required this.setPdeConstrainstStatusFun, 
+    required this.setEquationFun, 
+    required this.setPdeWeightFun,
+  });
+
+  @override
+  State<PdeConstraintSetting> createState() => _PdeConstraintSettingState();
+}
+
+class _PdeConstraintSettingState extends State<PdeConstraintSetting> {
+
+  final TextEditingController _pdeWeightController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _pdeWeightController.text = '${widget.pdeWeight}';
+  }
+
+  @override
+  void dispose() {
+    _pdeWeightController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: BackgroundColors.information,
+        border: Border.all(
+          color: BackgroundColors.line, 
+          width: 0.8 * scaleFactor,  
+        ),
+        borderRadius: BorderRadius.circular(2 * scaleFactor),
+      ),
+      padding: const EdgeInsets.all(6 * scaleFactor),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/pde_constraint.svg',
+            width: 18 * scaleFactor,
+            height: 18 * scaleFactor,
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          GestureDetector(
+            onTap: () {
+              widget.setPdeConstrainstStatusFun(
+                widget.usePdeConstrainst ? false : true
+              );
+            },
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10 * scaleFactor,
+                    child: Text(
+                      'PDE约束',
+                      style: TextStyle(
+                        fontSize: 8 * scaleFactor,
+                        color: ThemeColors.white,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2 * scaleFactor,
+                  ),
+                  Container(
+                    width: 12 * scaleFactor,
+                    height: 6 * scaleFactor,
+                    decoration: BoxDecoration(
+                      color: ThemeColors.white,
+                      borderRadius: BorderRadius.circular(3 * scaleFactor),
+                    ),
+                    child: Align(
+                      alignment: widget.usePdeConstrainst ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        width: 6 * scaleFactor,
+                        height: 6 * scaleFactor,
+                        decoration: BoxDecoration(
+                          color: widget.usePdeConstrainst ? ThemeColors.green : ThemeColors.red,
+                          borderRadius: BorderRadius.circular(3 * scaleFactor),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: BackgroundColors.line,
+              borderRadius: BorderRadius.circular(0.5 * scaleFactor),
+            ),
+            width: scaleFactor,
+            height: 18 * scaleFactor,
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          GestureDetector(
+            onTap: () {
+              pickFile(widget.setEquationFun);
+            },
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10 * scaleFactor,
+                    child: Text(
+                      '方程文件',
+                      style: TextStyle(
+                        fontSize: 8 * scaleFactor,
+                        color: ThemeColors.white,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2 * scaleFactor,
+                  ),
+                  SizedBox(
+                    height: 6 * scaleFactor,
+                    child: Text(
+                      widget.equationName,
+                      style: const TextStyle(
+                        fontSize: 5 * scaleFactor,
+                        color: ThemeColors.lightWhite,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: BackgroundColors.line,
+              borderRadius: BorderRadius.circular(0.5 * scaleFactor),
+            ),
+            width: scaleFactor,
+            height: 18 * scaleFactor,
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10 * scaleFactor,
+                child: Text(
+                  '自适应权重',
+                  style: TextStyle(
+                    fontSize: 8 * scaleFactor,
+                    color: ThemeColors.white,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 2 * scaleFactor,
+              ),
+              SizedBox(
+                height: 6 * scaleFactor,
+                width: 40 * scaleFactor,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                  controller: _pdeWeightController,
+                  style: const TextStyle(
+                    fontSize: 5 * scaleFactor,
+                    color: ThemeColors.lightWhite,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
+                  ),
+                  onChanged: (value) {
+                    final double? doubleValue = double.tryParse(value);
+                    if (doubleValue != null) {
+                      widget.setPdeWeightFun(doubleValue);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TopographyPreProgressSetting extends StatefulWidget {
+  final bool useTopographyPreProgress;
+  final Function(bool) setTopographyPreProgressFun;
+
+  const TopographyPreProgressSetting({
+    super.key, required this.useTopographyPreProgress, required this.setTopographyPreProgressFun,
+  });
+
+  @override
+  State<TopographyPreProgressSetting> createState() => _TopographyPreProgressSettingState();
+}
+
+class _TopographyPreProgressSettingState extends State<TopographyPreProgressSetting> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: BackgroundColors.information,
+        border: Border.all(
+          color: BackgroundColors.line, 
+          width: 0.8 * scaleFactor,  
+        ),
+        borderRadius: BorderRadius.circular(2 * scaleFactor),
+      ),
+      padding: const EdgeInsets.all(6 * scaleFactor),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/topography_pre_progress.svg',
+            width: 18 * scaleFactor,
+            height: 18 * scaleFactor,
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          GestureDetector(
+            onTap: () {
+              widget.setTopographyPreProgressFun(
+                widget.useTopographyPreProgress ? false : true
+              );
+            },
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10 * scaleFactor,
+                    child: Text(
+                      '地形区域数值预处理',
+                      style: TextStyle(
+                        fontSize: 8 * scaleFactor,
+                        color: ThemeColors.white,
+                        fontFamily: 'Microsoft YaHei',
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2 * scaleFactor,
+                  ),
+                  Container(
+                    width: 12 * scaleFactor,
+                    height: 6 * scaleFactor,
+                    decoration: BoxDecoration(
+                      color: ThemeColors.white,
+                      borderRadius: BorderRadius.circular(3 * scaleFactor),
+                    ),
+                    child: Align(
+                      alignment: widget.useTopographyPreProgress ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        width: 6 * scaleFactor,
+                        height: 6 * scaleFactor,
+                        decoration: BoxDecoration(
+                          color: widget.useTopographyPreProgress ? ThemeColors.green : ThemeColors.red,
+                          borderRadius: BorderRadius.circular(3 * scaleFactor),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -106,13 +535,17 @@ class EageSampleSetting extends StatefulWidget {
   final double adaptiveWeight;
   final double eagePointWeight;
   final Function(bool) setEageSampleStatusFun;
+  final Function(double) setEagePointWeightFun;
+  final Function(double) setAdaptiveWeightFun;
 
   const EageSampleSetting({
     super.key, 
     required this.useEageSample, 
     required this.adaptiveWeight, 
     required this.eagePointWeight, 
-    required this.setEageSampleStatusFun,
+    required this.setEageSampleStatusFun, 
+    required this.setEagePointWeightFun, 
+    required this.setAdaptiveWeightFun, 
   });
 
   @override
@@ -120,6 +553,23 @@ class EageSampleSetting extends StatefulWidget {
 }
 
 class _EageSampleSettingState extends State<EageSampleSetting> {
+  final TextEditingController _eagePointWeightController = TextEditingController();
+  final TextEditingController _adaptiveWeightController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _eagePointWeightController.text = '${widget.eagePointWeight}';
+    _adaptiveWeightController.text = '${widget.adaptiveWeight}';
+  }
+
+  @override
+  void dispose() {
+    _eagePointWeightController.dispose();
+    _adaptiveWeightController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -207,48 +657,119 @@ class _EageSampleSettingState extends State<EageSampleSetting> {
           const SizedBox(
             width: 6 * scaleFactor,
           ),
-          GestureDetector(
-            onTap: () {
-              // pickFile(widget.setPointdModelFun);
-            },
-            child: const MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 10 * scaleFactor,
-                    child: Text(
-                      '点云模型',
-                      style: TextStyle(
-                        fontSize: 8 * scaleFactor,
-                        color: ThemeColors.white,
-                        fontFamily: 'Microsoft YaHei',
-                        height: 1,
-                      ),
-                    ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10 * scaleFactor,
+                child: Text(
+                  '边缘点权重',
+                  style: TextStyle(
+                    fontSize: 8 * scaleFactor,
+                    color: ThemeColors.white,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
                   ),
-                  SizedBox(
-                    height: 2 * scaleFactor,
-                  ),
-                  SizedBox(
-                    height: 6 * scaleFactor,
-                    child: Center(
-                      child: Text(
-                        '1',
-                        style: TextStyle(
-                          fontSize: 5 * scaleFactor,
-                          color: ThemeColors.lightWhite,
-                          fontFamily: 'Microsoft YaHei',
-                          height: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
+              const SizedBox(
+                height: 2 * scaleFactor,
+              ),
+              SizedBox(
+                height: 6 * scaleFactor,
+                width: 40 * scaleFactor,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                  controller: _eagePointWeightController,
+                  style: const TextStyle(
+                    fontSize: 5 * scaleFactor,
+                    color: ThemeColors.lightWhite,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
+                  ),
+                  onChanged: (value) {
+                    final double? doubleValue = double.tryParse(value);
+                    if (doubleValue != null) {
+                      widget.setEagePointWeightFun(doubleValue);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: BackgroundColors.line,
+              borderRadius: BorderRadius.circular(0.5 * scaleFactor),
             ),
+            width: scaleFactor,
+            height: 18 * scaleFactor,
+          ),
+          const SizedBox(
+            width: 6 * scaleFactor,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10 * scaleFactor,
+                child: Text(
+                  '自适应权重',
+                  style: TextStyle(
+                    fontSize: 8 * scaleFactor,
+                    color: ThemeColors.white,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 2 * scaleFactor,
+              ),
+              SizedBox(
+                height: 6 * scaleFactor,
+                width: 40 * scaleFactor,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                  controller: _adaptiveWeightController,
+                  style: const TextStyle(
+                    fontSize: 5 * scaleFactor,
+                    color: ThemeColors.lightWhite,
+                    fontFamily: 'Microsoft YaHei',
+                    height: 1,
+                  ),
+                  onChanged: (value) {
+                    final double? doubleValue = double.tryParse(value);
+                    if (doubleValue != null) {
+                      widget.setAdaptiveWeightFun(doubleValue);
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -262,7 +783,7 @@ class ModelSetting extends StatefulWidget {
     required this.gridModelName,
     required this.pointModelName,
     required this.setGridModelFun,
-    required this.setPointdModelFun,
+    required this.setPointModelFun,
   });
 
   final String gridModelName;
@@ -271,7 +792,7 @@ class ModelSetting extends StatefulWidget {
   
   final Function(String fileName)  setGridModelFun;
   
-  final Function(String fileName)  setPointdModelFun;
+  final Function(String fileName)  setPointModelFun;
 
   @override
   State<ModelSetting> createState() => _ModelSettingState();
@@ -361,7 +882,7 @@ class _ModelSettingState extends State<ModelSetting> {
           ),
           GestureDetector(
             onTap: () {
-              pickFile(widget.setPointdModelFun);
+              pickFile(widget.setPointModelFun);
             },
             child: MouseRegion(
               cursor: SystemMouseCursors.click,

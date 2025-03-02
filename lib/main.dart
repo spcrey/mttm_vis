@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Model Training Task Management and Visualization Interactive System',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Padding(
