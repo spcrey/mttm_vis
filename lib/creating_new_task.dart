@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mttm_vis/param.dart';
 
 class CreatingNewTask extends StatefulWidget {
+  final VoidCallback toCreateNewTaskFun;
   const CreatingNewTask({
-    super.key,
+    super.key, required this.toCreateNewTaskFun,
   });
 
   @override
@@ -140,6 +141,7 @@ class _CreatingNewTaskState extends State<CreatingNewTask> {
             GestureDetector(
               onTap: () {
                 logger.d('创建任务');
+                widget.toCreateNewTaskFun();
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -388,7 +390,7 @@ class _PdeConstraintSettingState extends State<PdeConstraintSetting> {
               const SizedBox(
                 height: 10 * scaleFactor,
                 child: Text(
-                  '自适应权重',
+                  '权重',
                   style: TextStyle(
                     fontSize: 8 * scaleFactor,
                     color: ThemeColors.white,

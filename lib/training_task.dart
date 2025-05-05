@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mttm_vis/creating_new_task.dart';
+import 'package:mttm_vis/data.dart';
 
 import 'package:mttm_vis/param.dart';
 import 'package:mttm_vis/task_list.dart';
@@ -29,6 +32,19 @@ class _TrainingTaskState extends State<TrainingTask> {
   void _setSelecedItemFun(TrainingTaskSelectableItem selecedItem) {
     setState(() {
       _selectedItem = selecedItem;
+    });
+  }
+
+  void _toCreateNewTaskFun() {
+    trainTaskListItems.insert(0, TrainTaskItem(
+      name: "CT5Y",
+      createDateTime: DateTime(2025, 2, 26),
+      status: TaskListItemStatus.inProgress
+    ));
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _selectedItem = TrainingTaskSelectableItem.taskList;
+      });
     });
   }
   
@@ -63,7 +79,9 @@ class _TrainingTaskState extends State<TrainingTask> {
           ),
           switch(_selectedItem) {
             TrainingTaskSelectableItem.taskList => const TaskList(),
-            TrainingTaskSelectableItem.creatingNewTask => const CreatingNewTask(),
+            TrainingTaskSelectableItem.creatingNewTask => CreatingNewTask(
+              toCreateNewTaskFun: _toCreateNewTaskFun
+            ),
           }
         ],
       ),

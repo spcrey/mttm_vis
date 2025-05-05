@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mttm_vis/data.dart';
 
 import 'package:mttm_vis/param.dart';
 
@@ -32,6 +35,7 @@ enum VisualizationStatus {
   pending,
   completed,
 }
+
 
 class Visualization extends StatefulWidget {
   const Visualization({
@@ -167,8 +171,10 @@ class _VisualizationState extends State<Visualization> {
               GestureDetector(
                 onTap: () {
                   logger.d('可视化评估');
-                  setState(() {
-                    status = VisualizationStatus.completed;
+                  Timer(const Duration(seconds: 2), () {
+                    setState(() {
+                      status = VisualizationStatus.completed;
+                    });
                   });
                 },
                 child: MouseRegion(
@@ -261,6 +267,8 @@ class VisualizationResult extends StatefulWidget {
 class _VisualizationResultState extends State<VisualizationResult> {
   VisualizationMode _mode = VisualizationMode.imageFrame;
 
+  int imageID = 0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -311,13 +319,14 @@ class _VisualizationResultState extends State<VisualizationResult> {
           children: [
             Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: ThemeColors.white,
-                    borderRadius: BorderRadius.circular(2 * scaleFactor),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2 * scaleFactor),
+                  child: Image.asset(
+                    gtImagePath[imageID],
+                    width: 240 * scaleFactor,
+                    height: 60 * scaleFactor,
+                    fit: BoxFit.fill,
                   ),
-                  width: 240 * scaleFactor,
-                  height: 60 * scaleFactor,
                 ),
                 const SizedBox(
                   height: 3 * scaleFactor,
@@ -340,13 +349,14 @@ class _VisualizationResultState extends State<VisualizationResult> {
             ),
             Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: ThemeColors.white,
-                    borderRadius: BorderRadius.circular(2 * scaleFactor),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2 * scaleFactor),
+                  child: Image.asset(
+                    modelImagePath[imageID],
+                    width: 240 * scaleFactor,
+                    height: 60 * scaleFactor,
+                    fit: BoxFit.fill,
                   ),
-                  width: 240 * scaleFactor,
-                  height: 60 * scaleFactor,
                 ),
                 const SizedBox(
                   height: 3 * scaleFactor,
@@ -423,6 +433,9 @@ class _VisualizationResultState extends State<VisualizationResult> {
                 switch(_mode) {
                   case VisualizationMode.imageFrame:
                     logger.d('上一帧');
+                    setState(() {
+                      imageID = (imageID - 1) % 3;
+                    });
                     break;
                   case VisualizationMode.videoPlay:
                     logger.d('切换为暂停模式');
@@ -471,6 +484,9 @@ class _VisualizationResultState extends State<VisualizationResult> {
           GestureDetector(
               onTap: () {
                 logger.d('下一帧');
+                setState(() {
+                  imageID = (imageID + 1) % 3;
+                });
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
